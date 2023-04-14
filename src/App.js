@@ -10,8 +10,8 @@ const App = () => {
 
     <Router>
       <Routes>
-        <Route path='/' element={<KanbanBoard/>}/>
-        <Route path='/kanbanboard' element={<Home/>}/>
+        <Route path='/board' element={<KanbanBoard/>}/>
+        <Route path='/' element={<Home/>}/>
       </Routes>
     </Router>
 
