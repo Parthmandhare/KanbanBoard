@@ -1,0 +1,44 @@
+::-webkit-scrollbar{
+    width: 8px;
+}
+
+::-webkit-scrollbar-thumb{
+    border-radius: 30px;
+    border: 1px solid #f8f8f8;
+    background-color: #fff;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background-color: #ccc;
+}
+
+.kanbanboard{
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.kanbanboard_navbar{
+    width: 100%;
+    padding: 20px, 30px; 
+}
+
+.kanbanboard_outer{
+    flex:1;
+    width: 100%;
+    overflow-x: auto;
+
+}
+.kanbanboard_boards{
+    /* padding: 30px ; */
+    height: 100%;
+    min-width: fit-content;
+    display: flex;
+    gap: 30px;
+}
+
+.boards_add_board{
+    margin: 45px 15px 15px 30px;
+    width: 300px;
+}

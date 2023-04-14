@@ -1,0 +1,54 @@
+.card{
+    padding: 10px;
+    background-color: rgb(187, 182, 182);
+    border-radius: 10px;
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.card_top{
+    display: flex;
+    gap: 100px;
+}
+
+.card_top_labels{
+    flex: 1;
+    display: flex;
+    gap: 10px;
+}
+
+.card_top svg {
+    opacity: 0;
+    transition: 200ms;
+}
+
+.card:hover .card_top svg{
+    opacity: 1;
+}
+
+ 
+
+.card_footer{
+    /* margin: 15px 0 10px 10px; */
+    display: flex;
+    /* flex-direction: row;
+    gap: 20px; */
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card_footer p{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
+
+.card_footer svg{
+    height: 17px;
+    width: 17px;
+}
+
+.card_top_more{
+    position: relative;
+}

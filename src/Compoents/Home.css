@@ -1,0 +1,151 @@
+/* Default styles */
+
+.navbar_title {
+    margin: 5rem 5rem;
+  }
+  
+  .page1 {
+    display: flex;
+    flex-direction: row;
+    margin: 8rem;
+  }
+  
+  .page1_image img {
+    width: 80rem;
+    margin: 15px;
+  }
+  
+  .page1_title {
+    text-align: left;
+    margin: 6rem;
+  }
+  
+  .text_title2 {
+    margin-top: 1rem;
+    margin-right: 15rem;
+  }
+  
+  .page1_title Button {
+    margin-top: 2rem;
+  }
+  
+  .page2 {
+    display: flex;
+    flex-direction: column;
+    margin: 8rem;
+  }
+  
+  .page2_title {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .feature1 {
+    display: flex;
+    flex-direction: row;
+    margin: 9rem;
+    gap: 7rem;
+  }
+  
+  .feature1_img img {
+    width: 90rem;
+  }
+  
+  .feature1_content,
+  .feature2_content,
+  .feature2_content {
+    margin-top: 5rem;
+  }
+  
+  .feature2,
+  .feature3 {
+    display: flex;
+    flex-direction: row;
+    margin: 2rem 9rem 9rem 9rem;
+    gap: 7rem;
+  }
+  
+  .feature2_img img {
+    width: 105rem;
+  }
+  
+  .feature3_img img {
+    width: 105rem;
+  }
+  
+  /* Media queries */
+  
+  /* For screens with a maximum width of 1200px */
+  @media only screen and (max-width: 1200px) {
+    .page1 {
+      flex-direction: column;
+      margin: 1rem;
+      
+      
+    }
+    
+    .page1_image img {
+      /* width: 100%;
+      margin: 15px auto; */
+      display: none;
+    }
+    
+    .text_title2 {
+      margin-right: 0;
+      text-align: center;
+    }
+    
+    .feature1 {
+      flex-direction: column;
+      margin: 2rem;
+      gap: 4rem;
+    }
+    
+    .feature1_img img {
+      width: 100%;
+    }
+
+    .page2 {
+      margin: 3rem 1rem 3rem 1rem;
+      text-align: center;
+    }
+    
+    .feature2,
+    .feature3 {
+      flex-direction: column;
+      margin: 2rem 1rem 2rem 1rem;
+      gap: 4rem;
+    }
+    
+    .feature2_img img,
+    .feature3_img img {
+      width: 100%;
+    }
+    .page2_title{
+      margin-bottom:5rem ;
+    }
+    .feature2{
+      margin-top: 0rem;
+    }
+  }
+  
+  /* For screens with a maximum width of 768px */
+  @media only screen and (max-width: 768px) {
+    .page1_title {
+      text-align: center;
+      margin: 4rem 2rem;
+    }
+    
+    .page1_title Button {
+      margin-top: 1rem;
+    }
+    
+    .feature1,
+    .feature2,
+    .feature3 {
+      margin: 4rem;
+    }
+  }
+  
