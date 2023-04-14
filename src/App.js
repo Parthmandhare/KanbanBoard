@@ -1,6 +1,6 @@
 import React from 'react'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
-import KanbanBoard from './Compoents/Kanbanboard';
+import KanbanBoard from './Compoents/KbBoard';
 import Home from './Compoents/Home';
 
 
