@@ -1,187 +1,166 @@
 import React, { useEffect, useState } from 'react';
-import {
-  
-  Text,
-  
-} from '@chakra-ui/react';
+
+// Importing styles and components
 import './kanbanboard.css'
 import Board from './Board';
 import AddCard from './AddCard';
+import Navbar from './Navbar';
 
 function KanbanBoard() {
+  // State to store board data (initializing with data from localStorage or an empty array)
+  const [boards, setBoards] = useState(JSON.parse(localStorage.getItem('Kanban')) || []);
 
-  const [boards, setBoards]= useState(JSON.parse(localStorage.getItem('Kanban')) || [
-    // {
-    //   id:Date.now() + Math.random()*2,
-    //   title: "To Do",
-    //   cards:[
-    //     {
-    //       id:Date.now() + Math.random(),
-    //       title:"Card1",
-    //       tasks:[],
-    //       labels:[{
-    //         text:"frontend",
-    //         color:"blue",
-    //       }],
-    //       desc:"nothing is here",
-    //       date:""
-    //     },
-    //     {
-    //       id:Date.now() + Math.random(),
-    //       title:"Card2",
-    //       tasks:[],
-    //       labels:[{
-    //         text:"backend",
-    //         color:"red"
-    //       }],
-    //       desc:"everything is here",
-    //       date:""
-    //     },
-    //   ]
-    // }
-  ])
-
+  // State to track the target card being dragged (includes card id and board id)
   const [target, setTarget] = useState({
-    cid:"",
-    bid:"",
-  })
+    cid: "",  // Card ID
+    bid: "",  // Board ID
+  });
 
-  // bid is board id
-
-  const addCard = (title, bid) =>{
+  // Function to add a new card to a specific board
+  const addCard = (title, bid) => {
     const card = {
-      id:Date.now() + Math.random(),
-      title,
-      labels:[],
-      tasks:[],
-      date:"",
-      desc:"",
-    }
+      id: Date.now() + Math.random(), // Unique ID for the card
+      title,  // Card title
+      date: "",
+      desc: "",
+      toUser: ""
+    };
 
-    const index = boards.findIndex(item => item.id==bid)
+    // Find the board index where the card should be added
+    const index = boards.findIndex(item => item.id == bid);
+    if (index < 0) return;  // Exit if no board is found
 
-    if(index<0) return;
-
-    const tempBoards=[...boards]
+    // Create a copy of boards, add the card to the selected board
+    const tempBoards = [...boards];
     tempBoards[index].cards.push(card);
-    setBoards(tempBoards)
-  }
+    setBoards(tempBoards);  // Update boards state
+  };
 
-  // for removing card
+  // Function to remove a card from a specific board
+  const removeCard = (cid, bid) => {
+    const bIndex = boards.findIndex((item) => item.id === bid);
+    if (bIndex < 0) return;  // Exit if board not found
 
-  const removeCard =(cid, bid) =>
-  {
-    const bIndex = boards.findIndex((item)=> item.id === bid);
-    if(bIndex < 0) return;
+    const cIndex = boards[bIndex].cards.findIndex((item) => item.id === cid);
+    if (cIndex < 0) return;  // Exit if card not found
 
-    const cIndex = boards[bIndex].cards.findIndex((item)=> item.id === cid);
-    if(cIndex < 0) return;
+    const tempBoards = [...boards];
+    tempBoards[bIndex].cards.splice(cIndex, 1);  // Remove the card
+    setBoards(tempBoards);  // Update boards state
+  };
 
-    const tempBoards=[...boards];
-    tempBoards[bIndex].cards.splice(cIndex,1);
-    setBoards(tempBoards);
-
-  }
-
-  const addBoard=(title) =>{
+  // Function to add a new board
+  const addBoard = (title) => {
     setBoards([
       ...boards,
       {
-        id:Date.now() + Math.random(),
-        title,
-        cards:[],
+        id: Date.now() + Math.random(),  // Unique ID for the board
+        title,  // Board title
+        cards: [],  // Empty array for cards in this board
       }
-    ])
-  }
+    ]);
+  };
 
-  const removeBoard = (bid) =>{
-  const tempBoards = boards.filter((item) => item.id != bid);
+  // Function to update the title of a board
+  const upDateBoard = (bid, title) => {
+    let currBoard = boards.map((item) => {
+      if (item.id == bid) {
+        item.title = title;  // Update the title
+        return item;
+      }
+      return item;
+    });
 
-  setBoards(tempBoards);
-  }
+    setBoards(currBoard);  // Update boards state
+  };
 
+  // Function to remove a board
+  const removeBoard = (bid) => {
+    const tempBoards = boards.filter((item) => item.id != bid);  // Filter out the board by ID
+    setBoards(tempBoards);  // Update boards state
+  };
 
-  const handelDragEnter=(cid,bid)=>{
+  // Function to handle drag enter event for a card
+  const handelDragEnter = (cid, bid) => {
     setTarget({
-      cid,
-      bid,
-    })
-  }
-  const handelDragEnd=(cid, bid)=>{
-    let s_bIndex, s_cIndex, t_bIndex, t_cIndex
+      cid,  // Card ID being dragged
+      bid,  // Board ID being dragged into
+    });
+  };
 
-    s_bIndex =boards.findIndex(item=> item.id===bid)
-    if(s_bIndex<0) return
+  // Function to handle the drop event when a card is dragged and dropped
+  const handelDragEnd = (cid, bid) => {
+    let s_bIndex, s_cIndex, t_bIndex, t_cIndex;
 
-    s_cIndex=boards[s_bIndex].cards?.findIndex(item=> item.id===cid)
-    if(s_cIndex<0) return
+    // Source board and card index
+    s_bIndex = boards.findIndex(item => item.id === bid);
+    if (s_bIndex < 0) return;
+    s_cIndex = boards[s_bIndex].cards?.findIndex(item => item.id === cid);
+    if (s_cIndex < 0) return;
 
-    t_bIndex =boards.findIndex(item=> item.id===target.bid)
-    if(t_bIndex<0) return
+    // Target board and card index
+    t_bIndex = boards.findIndex(item => item.id === target.bid);
+    if (t_bIndex < 0) return;
+    t_cIndex = boards[t_bIndex].cards?.findIndex(item => item.id === target.cid);
+    if (t_cIndex < 0) return;
 
-    t_cIndex=boards[t_bIndex].cards?.findIndex(item=> item.id===target.cid)
-    if(t_cIndex<0) return
+    // Move the card from the source board to the target board
+    const tempboards = [...boards];
+    const tempcards = tempboards[s_bIndex].cards[s_cIndex];
+    tempboards[s_bIndex].cards.splice(s_cIndex, 1);  // Remove from source
+    tempboards[t_bIndex].cards.splice(t_cIndex, 0, tempcards);  // Insert into target
 
+    setBoards(tempboards);  // Update boards state
+  };
 
-    const tempboards = [...boards]
-    const tempcards = tempboards[s_bIndex].cards[s_cIndex]
+  // Function to update a card's details
+  const updateCard = (cid, bid, card) => {
+    const bIndex = boards.findIndex((item) => item.id === bid);
+    if (bIndex < 0) return;
 
+    const cIndex = boards[bIndex].cards.findIndex((item) => item.id === cid);
+    if (cIndex < 0) return;
 
-    tempboards[s_bIndex].cards.splice(s_cIndex,1)
-    tempboards[t_bIndex].cards.splice(t_cIndex,0,tempcards)
+    const tempBoards = [...boards];
+    tempBoards[bIndex].cards[cIndex] = card;  // Update card details
+    setBoards(tempBoards);  // Update boards state
+  };
 
-
-    setBoards(tempboards);
- 
-  }
-
-  const updateCard = (cid, bid, card)=>{
-    const bIndex = boards.findIndex((item)=> item.id === bid);
-    if(bIndex < 0) return;
-
-    const cIndex = boards[bIndex].cards.findIndex((item)=> item.id === cid);
-    if(cIndex < 0) return;
-
-    const tempBoards = [...boards]
-    tempBoards[bIndex].cards[cIndex] = card;
-    setBoards(tempBoards);
-  }
-
-  useEffect(()=>{
-    localStorage.setItem('Kanban',JSON.stringify(boards))
-  }, [boards])
+  // Use effect hook to save boards state in localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('Kanban', JSON.stringify(boards));
+  }, [boards]);
 
   return (
-    <div className='kanbanboard'>
-      <div className="kanbanboard_navbar">
-      <Text fontSize='4xl' as='b' ml ='8' >Kanban Board</Text>
-      </div>
+    <div>
+      <Navbar />
 
-      <div className="kanbanboard_outer">
-        <div className="kanbanboard_boards">
-          {
-            boards.map((item) => <Board
-            removeBoard ={removeBoard}
-            key={item.id}
-            board={item}
-            addCard={addCard}
-            removeCard={removeCard}
-            handelDragEnd ={handelDragEnd}
-            handelDragEnter ={handelDragEnter}
-            updateCard ={updateCard }
-            />)
-          }
-          <div className="boards_add_board">
-
+      {/* Main content area where the Kanban boards and cards are displayed */}
+      <div className="mx-10 my-10 flex gap-10">
+        {
+          boards.map((item) => (
+            <Board
+              removeBoard={removeBoard}
+              key={item.id}
+              board={item}
+              addCard={addCard}
+              removeCard={removeCard}
+              handelDragEnd={handelDragEnd}
+              handelDragEnter={handelDragEnter}
+              updateCard={updateCard}
+              upDateBoard={upDateBoard}
+            />
+          ))
+        }
+        {/* Add new board section */}
+        <div className="boards_add_board">
           <AddCard
-          text="Add Board"
-          placeholder = "Enter board title"
-          onSubmit ={(value)=> addBoard(value) }
+            buttonText="Add Section"
+            placeholder="Enter Section title"
+            onSubmit={(value) => addBoard(value)}
           />
-          </div>
         </div>
       </div>
-
     </div>
   );
 }

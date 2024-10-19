@@ -1,212 +1,123 @@
-import React, { useEffect, useState } from 'react'
-import { Calendar, CheckSquare, List, Tag, Trash, Type } from 'react-feather'
-import "./CardInfo.css"
-import Modal from './Modal'
-import AddCard from './AddCard'
-import Chips from './Chips'
+import React, { useEffect, useState } from 'react';
+import { Calendar, CheckSquare, List, Tag, Trash, Type } from 'react-feather';
+import "./CardInfo.css";
+import Modal from './Modal';
+import AddCard from './AddCard';
+import Chips from './Chips';
 
 const CardInfo = (props) => {
-  const colors = [
-    "#a8193d",
-    "#4fcc25",
-    "#1ebffa",
-    "#8da377",
-    "#9975bd",
-    "#cf61a1",
-    "#240959",
-  ];
+  // Initialize state with card details from props
+  const [values, setValues] = useState({ ...props.card });
 
-  const [activeColor, setActiveColor] = useState("");
+  // Effect to update the card whenever 'values' changes
+  useEffect(() => {
+    props.updateCard(props.card.id, props.boardID, values);
+  }, [values]);
 
-  const {title, labels, desc, date, tasks} = props.card
-
-  const [values, setValues] = useState({...props.card})
-
-  const calPercent = ()=>{
-    if (!values.tasks?.length) return 0;
-    const completed = values.tasks?.filter((item) => item.completed)?.length;
-    return (completed / values.tasks?.length) * 100;
-  }
-
-  useEffect(()=>{
-    props.updateCard(props.card.id,props.boardID,values )
-  },[values])
-
-  const addLabel = (value, color)=>{
-    const index = values.labels?.findIndex(item=>item.text===value);
-    if(index>-1) return
-
-    const label ={
-      text: value,
-      color
-    }
-    setValues({...values, labels: [...values.labels,label]})
-    setActiveColor("")
-  }
-
-  const removeLabel =(text) =>{
-
-    const templabels = values.labels?.filter(item=>item.text!==text)
-
-    setValues({...values, labels: templabels})
-  }
-
-  const addTask = (value) =>{
+  // Function to add a new task to the card
+  const addTask = (value) => {
     const task = {
-      id: Date.now() + Math.random(),
-      text: value,
-      completed: false
-    }
+      id: Date.now() + Math.random(), // Unique ID for the task
+      text: value, // Task text
+      completed: false // Initial state as incomplete
+    };
 
-    setValues({...values, tasks:[...values.tasks, task]})
-  }
+    // Update state with the new task
+    setValues({ ...values, tasks: [...values.tasks, task] });
+  };
 
-  const removeTask = (id) =>{
-    const index = values.tasks?.findIndex(item =>item.id === id)
-    if(index<0) return
+  // Function to remove a task by its ID
+  const removeTask = (id) => {
+    const index = values.tasks?.findIndex(item => item.id === id);
+    if (index < 0) return; // Return if task not found
 
-    const tempTask = values.tasks?.splice(index,1)
-    setValues({...values, tasks:tempTask})
-  }
+    // Remove the task from the tasks array
+    const tempTask = values.tasks?.splice(index, 1);
+    setValues({ ...values, tasks: tempTask });
+  };
 
-  const updateTask = (id, completed)=>{
-    const index = values.tasks?.findIndex(item =>item.id === id)
-    if(index<0) return
+  // Function to update the completion status of a task
+  const updateTask = (id, completed) => {
+    const index = values.tasks?.findIndex(item => item.id === id);
+    if (index < 0) return; // Return if task not found
 
-    const tempTask = [...values.tasks]
-    tempTask[index].completed = completed;
-    setValues({...values, tasks: tempTask})
-  }
+    const tempTask = [...values.tasks]; // Create a copy of tasks
+    tempTask[index].completed = completed; // Update completion status
+    setValues({ ...values, tasks: tempTask }); // Update state
+  };
 
   return (
     <div>
-        <Modal onClose={()=>props.onClose()}>
-            <div className="cardinfo">
-               <div className="cardinfo_box">
-                <div className="cardinfo_box_title">
-                  <Type/>
-                  Title
-                </div>
-                <div className="box_boady">
-                <AddCard
-                text={values.title}
+      {/* Modal to display card information */}
+      <Modal onClose={() => props.onClose()}>
+        <div className="cardinfo">
+          {/* Card Title Section */}
+          <div className="cardinfo_box">
+            <div className="cardinfo_box_title">
+              <Type />
+              Title
+            </div>
+            <div className="box_boady">
+              <AddCard
+                text={values.title} // Current title
                 placeholder="Enter Title"
                 className="add_title"
                 buttonText="Add Title"
-                onSubmit ={(value)=> setValues({...values, title:value})}
-                />
-                </div>
-               </div>
+                onSubmit={(value) => setValues({ ...values, title: value })} // Update title on submit
+              />
+            </div>
+          </div>
 
-
-               <div className="cardinfo_box">
-                <div className="cardinfo_box_title">
-                  <List/>
-                  Description
-                </div>
-                <div className="box_boady">
-                <AddCard
-                text={values.desc}
+          {/* Card Description Section */}
+          <div className="cardinfo_box">
+            <div className="cardinfo_box_title">
+              <List />
+              Description
+            </div>
+            <div className="box_boady">
+              <AddCard
+                text={values.desc} // Current description
                 placeholder="Enter Desc"
                 buttonText="Add Desc"
-                onSubmit ={(value)=> setValues({...values, desc:value})}
-                />
-                </div>
-               </div>
-
-
-               <div className="cardinfo_box">
-                <div className="cardinfo_box_title">
-                  <Calendar/>
-                  Date
-                </div>
-                <div className="box_boady">
-                <input type="date" defaultValue={values.date ? new Date(values.date).toISOString().substr(0,10): ""}
-                onChange={(e)=> 
-                setValues({...values, date:e.target.value})}
-                />
-                </div>
-               </div>
-
-
-               <div className="cardinfo_box">
-                <div className="cardinfo_box_title">
-                  <Tag/>
-                  Lable
-                </div>
-
-                <div className="labels">
-                  {
-                    values.labels?.map((item,index)=> 
-                    <Chips close onClose={()=> removeLabel(item.text)} key={item.text + index} 
-                    color={item.color}
-                    text={item.text}
-                    />)
-                  }
-                </div>
-
-                <div className="colors">
-                  {
-                    colors.map((item,index)=>
-                    <li key={index} style={{backgroundColor: item}}
-                    className={item===activeColor?"active": ""}
-                    onClick={()=>setActiveColor(item)}
-                    
-                    >
-                    
-                  </li>)
-                  }
-                
-                </div>
-                <div className="box_boady">
-                <AddCard
-                text="Add Label"
-                placeholder="Enter Label Name"
-                buttonText="Add Label"
-                onSubmit={(value)=> addLabel(value,activeColor)}
-                />
-                </div>
-               </div>
-
-
-               <div className="cardinfo_box">
-                <div className="cardinfo_box_title">
-                  <CheckSquare/>
-                  Task
-                </div>
-
-                <div className="progress_bar">
-                  <div className="progress" style={{width: `${calPercent()}%`}}/>
-                </div>
-
-                  <div className="task_list">
-
-                  {
-                    values.tasks?.map((item)=> 
-                    <div className="task" key={item.id}>
-                    <input type="checkbox" defaultChecked={item.completed}
-                    onChange={(e)=> updateTask(item.id, e.target.checked)}
-                    />
-                    <p>{item.text}</p>
-                    <Trash onClick={()=>removeTask(item.id)}/>
-                  </div>)
-                  }
-                </div>  
-
-                <div className="box_boady">
-                <AddCard
-                text="Add New Task"
-                placeholder="Enter Task"
-                buttonText="Add Task"
-                onSubmit ={(value)=>addTask(value)}
-                />
-                </div>
-               </div>
-
+                onSubmit={(value) => setValues({ ...values, desc: value })} // Update description on submit
+              />
             </div>
-        </Modal>
-    </div>
-  )
-}
+          </div>
 
-export default CardInfo
+          {/* Card Date Section */}
+          <div className="cardinfo_box">
+            <div className="cardinfo_box_title">
+              <Calendar />
+              Date
+            </div>
+            <div className="box_boady">
+              <input
+                type="date"
+                defaultValue={values.date ? new Date(values.date).toISOString().substr(0, 10) : ""}
+                onChange={(e) => setValues({ ...values, date: e.target.value })} // Update date on change
+              />
+            </div>
+          </div>
+
+          {/* Card Assign To Section */}
+          <div className="cardinfo_box">
+            <div className="cardinfo_box_title">
+              <List />
+              Assign to
+            </div>
+            <div className="box_boady">
+              <AddCard
+                text={values.toUser} // Current assigned user
+                placeholder="Assign to"
+                buttonText="Add User"
+                onSubmit={(value) => setValues({ ...values, toUser: value })} // Update assigned user on submit
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+    </div>
+  );
+};
+
+export default CardInfo;

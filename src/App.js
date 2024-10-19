@@ -7,11 +7,10 @@ import Home from './Compoents/Home';
 const App = () => {
   return (
     <>
-
+    {/* Routes */}
     <Router>
       <Routes>
-        <Route path='/board' element={<kbBoard/>}/>
-        <Route path='/home' element={<Home/>}/>
+        <Route path='/' element={<KanbanBoard/>}/>
       </Routes>
     </Router>
 
